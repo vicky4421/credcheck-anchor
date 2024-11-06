@@ -3,6 +3,9 @@ use anchor_lang::prelude::*;
 pub mod states;
 pub use states::*;
 
+pub mod instructions;
+pub use instructions::*;
+
 declare_id!("H2W53xLqF2FPPEMZ5aNNiYyg6PnzBQJyMXc28Jap7XGy");
 
 #[program]
