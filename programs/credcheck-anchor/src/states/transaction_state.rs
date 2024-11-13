@@ -12,5 +12,5 @@ pub struct TransactionState {
 }
 
 impl TransactionState {
-    pub const LEN: usize = 8 + 32 + 32 + 8 + 4 + 8 + 1 + 1;
+    pub const LEN: usize = 8 + 32 + 32 + 8 + 4 + 8 + 1 + 1;     // 94
 }
