@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::states::DebtorState;
+use crate::{states::DebtorState, TransactionList};
 
 #[derive(Accounts)]
 #[instruction(gst_registration_number: String)]
@@ -14,6 +14,15 @@ pub struct InitializeDebtor<'info> {
     )]
     pub debtor: Account<'info, DebtorState>,
 
+    #[account(
+        init,
+        payer = payer,
+        space = TransactionList::LEN,
+        seeds = [b"transaction_list", debtor.key().as_ref()],
+        bump
+    )]
+    pub transaction_list: Account<'info, TransactionList>,
+
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -26,13 +35,19 @@ pub fn initialize_debtor(
     name: String,
 ) -> Result<()> {
     let debtor = &mut ctx.accounts.debtor;
+    let transaction_list = &mut ctx.accounts.transaction_list;
 
     // initialize fields in debtor state
     debtor.gst_registration_number = gst_registration_number;
     debtor.name = name;
     debtor.average_default_days = 0;                            // initially 0 default days
-    debtor.defaulted_to = vec![];                               // initially no default transactions
-    debtor.last_updated = Clock::get()?.unix_timestamp;         // initizalize to current timestamp
+    debtor.total_transactions = 0;                              // initially no transactions
+    debtor.defaulted_transactions = Vec::new();                 // new empty vector for defaulted transactions
+    debtor.transactions = transaction_list.key();               // link back to transaction list
+           
+    // initialize fields in transaction list state
+    transaction_list.list = Vec::new();
+    transaction_list.next_list = None;
 
     Ok(())
 }
