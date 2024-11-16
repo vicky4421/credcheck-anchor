@@ -42,12 +42,13 @@ pub fn initialize_debtor(
     debtor.name = name;
     debtor.average_default_days = 0;                            // initially 0 default days
     debtor.total_transactions = 0;                              // initially no transactions
-    debtor.defaulted_transactions = Vec::new();                 // new empty vector for defaulted transactions
+    debtor.defaulted_transactions = Vec::with_capacity(10);     // new empty vector for defaulted transactions
     debtor.transactions = transaction_list.key();               // link back to transaction list
            
     // initialize fields in transaction list state
-    transaction_list.list = Vec::new();
+    transaction_list.list = Vec::with_capacity(50);
+    transaction_list.is_full = false;
     transaction_list.next_list = None;
 
     Ok(())
-}
+}   
